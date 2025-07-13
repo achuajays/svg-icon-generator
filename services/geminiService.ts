@@ -1,9 +1,8 @@
 import { GoogleGenAI } from "@google/genai";
 
 const getApiKey = () => {
-    // Only use localStorage - don't expose environment variables
-    const storedApiKey = typeof window !== 'undefined' ? localStorage.getItem('gemini_api_key') : null;
-    return storedApiKey || '';
+    // Get API key from localStorage
+    return localStorage.getItem('gemini_api_key') || '';
 };
 
 const createAI = () => {
@@ -11,7 +10,7 @@ const createAI = () => {
     if (!apiKey) {
         throw new Error("No API key provided. Please configure your Gemini API key in settings.");
     }
-    return new GoogleGenAI({ apiKey });
+    return new GoogleGenAI(apiKey);
 };
 
 const model = "gemini-2.5-flash";

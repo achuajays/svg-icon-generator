@@ -21,11 +21,8 @@ const App: React.FC = () => {
 
     // Initialize API key from environment or localStorage
     useEffect(() => {
-        const storedApiKey = localStorage.getItem('gemini_api_key');
-        
-        if (storedApiKey) {
+        const storedApiKey = localStorage.getItem('gemini_api_key') || '';
             setApiKey(storedApiKey);
-        }
     }, []);
 
     const showToastMessage = (message: string) => {
@@ -116,8 +113,6 @@ const App: React.FC = () => {
         setApiKey(newApiKey);
         if (newApiKey) {
             localStorage.setItem('gemini_api_key', newApiKey);
-            // Update the service with new API key
-            process.env.GEMINI_API_KEY = newApiKey;
         } else {
             localStorage.removeItem('gemini_api_key');
         }
