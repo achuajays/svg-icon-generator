@@ -60,24 +60,24 @@ export const ChatPanel: React.FC<ChatPanelProps> = ({ messages, onSendMessage, i
     }
 
     return (
-        <div className="flex flex-col h-full bg-gray-800">
-            <h2 className="text-lg font-semibold p-3 border-b border-gray-700 bg-gray-800/70">Conversation</h2>
-            <div className="flex-grow p-4 overflow-y-auto custom-scrollbar">
+        <div className="flex flex-col h-full professional-card rounded-none">
+            <h2 className="text-lg font-semibold p-4 border-b border-slate-200 bg-white/80 text-slate-700">Conversation</h2>
+            <div className="flex-grow p-4 overflow-y-auto custom-scrollbar bg-white/50">
                 <div className="space-y-6">
                     {messages.map((msg, index) => (
                         <div key={index} className={`flex items-start gap-3 ${msg.role === 'user' ? 'justify-end' : ''}`}>
-                            {msg.role === 'ai' && <div className="w-8 h-8 flex-shrink-0 bg-cyan-900 rounded-full flex items-center justify-center"><AILogo className="w-5 h-5 text-cyan-400" /></div>}
-                            <div className={`p-3 rounded-lg max-w-lg ${msg.role === 'user' ? 'bg-blue-600 text-white rounded-br-none' : 'bg-gray-700 text-gray-300 rounded-bl-none'}`}>
+                            {msg.role === 'ai' && <div className="w-8 h-8 flex-shrink-0 bg-blue-100 rounded-full flex items-center justify-center"><AILogo className="w-5 h-5 text-blue-600" /></div>}
+                            <div className={`p-3 rounded-lg max-w-lg message-bubble ${msg.role === 'user' ? 'bg-blue-600 text-white rounded-br-none shadow-professional' : 'bg-white text-slate-700 rounded-bl-none shadow-professional'}`}>
                                 <p className="whitespace-pre-wrap">{msg.content}</p>
                                 {msg.image && <img src={msg.image} alt="User upload" className="mt-2 rounded-md max-h-40" />}
                             </div>
-                             {msg.role === 'user' && <div className="w-8 h-8 flex-shrink-0 bg-gray-600 rounded-full flex items-center justify-center"><UserLogo className="w-5 h-5 text-gray-200" /></div>}
+                             {msg.role === 'user' && <div className="w-8 h-8 flex-shrink-0 bg-slate-100 rounded-full flex items-center justify-center"><UserLogo className="w-5 h-5 text-slate-600" /></div>}
                         </div>
                     ))}
                     {isLoading && (
                          <div className="flex items-start gap-3">
-                            <div className="w-8 h-8 flex-shrink-0 bg-cyan-900 rounded-full flex items-center justify-center"><LoadingSpinner className="w-5 h-5 text-cyan-400" /></div>
-                             <div className="p-3 rounded-lg bg-gray-700 text-gray-400 rounded-bl-none italic">
+                            <div className="w-8 h-8 flex-shrink-0 bg-blue-100 rounded-full flex items-center justify-center"><LoadingSpinner className="w-5 h-5 text-blue-600" /></div>
+                             <div className="p-3 rounded-lg bg-white text-slate-500 rounded-bl-none italic shadow-professional message-bubble">
                                 Thinking...
                              </div>
                          </div>
@@ -85,17 +85,17 @@ export const ChatPanel: React.FC<ChatPanelProps> = ({ messages, onSendMessage, i
                 </div>
                 <div ref={messagesEndRef} />
             </div>
-            <div className="p-3 border-t border-gray-700 bg-gray-800/70">
+            <div className="p-4 border-t border-slate-200 bg-white/80">
                 {imageName && (
-                     <div className="mb-2 flex items-center justify-between bg-gray-700 p-2 rounded-md text-sm">
-                        <span className="truncate text-gray-300">{imageName}</span>
-                        <button onClick={removeImage} className="p-1 rounded-full hover:bg-gray-600">
+                     <div className="mb-3 flex items-center justify-between bg-slate-100 p-3 rounded-lg text-sm shadow-professional">
+                        <span className="truncate text-slate-700">{imageName}</span>
+                        <button onClick={removeImage} className="p-1 rounded-full hover:bg-slate-200 transition-colors">
                             <CloseIcon className="w-4 h-4" />
                         </button>
                     </div>
                 )}
-                <div className="flex items-center gap-2 bg-gray-700 rounded-lg p-1">
-                    <button onClick={() => fileInputRef.current?.click()} className="p-2 text-gray-400 hover:text-cyan-400 rounded-md transition-colors">
+                <div className="flex items-center gap-3 bg-white rounded-lg p-2 shadow-professional border border-slate-200">
+                    <button onClick={() => fileInputRef.current?.click()} className="p-2 text-slate-500 hover:text-blue-600 rounded-md transition-colors professional-button">
                         <PaperclipIcon className="w-5 h-5" />
                     </button>
                     <input type="file" ref={fileInputRef} onChange={handleFileChange} accept="image/png, image/jpeg" className="hidden" />
@@ -103,11 +103,11 @@ export const ChatPanel: React.FC<ChatPanelProps> = ({ messages, onSendMessage, i
                         value={input}
                         onChange={(e) => setInput(e.target.value)}
                         onKeyPress={handleKeyPress}
-                        placeholder="Type your message..."
+                        placeholder="Describe the SVG you want to create..."
                         rows={1}
-                        className="flex-grow bg-transparent focus:outline-none resize-none text-gray-200 placeholder-gray-500 max-h-24 custom-scrollbar"
+                        className="flex-grow bg-transparent focus:outline-none resize-none text-slate-700 placeholder-slate-400 max-h-24 custom-scrollbar input-professional"
                     />
-                    <button onClick={handleSend} disabled={isLoading} className="p-2 bg-cyan-600 text-white rounded-md hover:bg-cyan-500 disabled:bg-gray-500 disabled:cursor-not-allowed transition-colors">
+                    <button onClick={handleSend} disabled={isLoading} className="p-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-slate-400 disabled:cursor-not-allowed transition-colors professional-button shadow-professional">
                         <SendIcon className="w-5 h-5" />
                     </button>
                 </div>

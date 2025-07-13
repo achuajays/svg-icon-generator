@@ -39,26 +39,26 @@ export const EditorPanel: React.FC<EditorPanelProps> = ({ svgCode, onCodeChange,
     };
 
     return (
-        <div className="flex flex-col h-full bg-gray-800">
-            <div className="flex justify-between items-center p-3 border-b border-gray-700 bg-gray-800/70">
+        <div className="flex flex-col h-full professional-card rounded-none">
+            <div className="flex justify-between items-center p-4 border-b border-slate-200 bg-white/80">
                 <div className="flex items-center gap-2">
-                    <div className="p-1 bg-gray-700 rounded-md">
-                        <button onClick={() => setShowPreview(false)} className={`px-2 py-1 text-sm rounded ${!showPreview ? 'bg-cyan-600 text-white' : 'text-gray-400 hover:bg-gray-600'}`}>
+                    <div className="p-1 bg-slate-100 rounded-lg border border-slate-200">
+                        <button onClick={() => setShowPreview(false)} className={`px-3 py-2 text-sm rounded-md transition-all professional-button ${!showPreview ? 'bg-blue-600 text-white shadow-professional' : 'text-slate-600 hover:bg-slate-200'}`}>
                             <CodeIcon className="w-5 h-5 inline-block mr-1" /> Code
                         </button>
-                        <button onClick={() => setShowPreview(true)} className={`px-2 py-1 text-sm rounded ${showPreview ? 'bg-cyan-600 text-white' : 'text-gray-400 hover:bg-gray-600'}`}>
+                        <button onClick={() => setShowPreview(true)} className={`px-3 py-2 text-sm rounded-md transition-all professional-button ${showPreview ? 'bg-blue-600 text-white shadow-professional' : 'text-slate-600 hover:bg-slate-200'}`}>
                            <EyeIcon className="w-5 h-5 inline-block mr-1" /> Preview
                         </button>
                     </div>
                 </div>
-                <div className="flex items-center gap-2">
-                    <button onClick={onSaveVersion} className="flex items-center gap-2 px-3 py-2 text-sm bg-gray-700 hover:bg-gray-600 rounded-md transition-colors">
+                <div className="flex items-center gap-3">
+                    <button onClick={onSaveVersion} className="flex items-center gap-2 px-4 py-2 text-sm bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors professional-button text-slate-700 border border-slate-200">
                         <SaveIcon className="w-4 h-4" /> Save Version
                     </button>
-                    <button onClick={copyToClipboard} className="flex items-center gap-2 px-3 py-2 text-sm bg-gray-700 hover:bg-gray-600 rounded-md transition-colors">
+                    <button onClick={copyToClipboard} className="flex items-center gap-2 px-4 py-2 text-sm bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors professional-button text-slate-700 border border-slate-200">
                         <CopyIcon className="w-4 h-4" /> Copy
                     </button>
-                    <button onClick={downloadSvg} className="flex items-center gap-2 px-3 py-2 text-sm bg-blue-600 hover:bg-blue-500 rounded-md transition-colors">
+                    <button onClick={downloadSvg} className="flex items-center gap-2 px-4 py-2 text-sm bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors professional-button text-white shadow-professional">
                         <DownloadIcon className="w-4 h-4" /> Download
                     </button>
                 </div>
@@ -68,12 +68,12 @@ export const EditorPanel: React.FC<EditorPanelProps> = ({ svgCode, onCodeChange,
                     <textarea
                         value={svgCode}
                         onChange={(e) => onCodeChange(e.target.value)}
-                        className="w-full h-full p-4 bg-gray-900 text-gray-200 font-mono focus:outline-none resize-none custom-scrollbar"
+                        className="w-full h-full p-6 bg-slate-50 text-slate-800 font-mono focus:outline-none resize-none custom-scrollbar border-0 input-professional"
                         spellCheck="false"
                     />
                 ) : (
-                    <div className="w-full h-full p-4 bg-grid-pattern flex items-center justify-center">
-                        {svgDataUrl && <img src={svgDataUrl} alt="SVG Preview" className="max-w-full max-h-full" />}
+                    <div className="w-full h-full p-8 bg-grid-pattern flex items-center justify-center">
+                        {svgDataUrl && <img src={svgDataUrl} alt="SVG Preview" className="max-w-full max-h-full shadow-professional-lg rounded-lg bg-white p-4" />}
                     </div>
                 )}
             </div>

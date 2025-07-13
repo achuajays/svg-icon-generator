@@ -94,21 +94,21 @@ const App: React.FC = () => {
     };
 
     return (
-        <div className="flex flex-col h-screen bg-gray-900 text-gray-200 font-sans">
-            <header className="flex items-center p-3 border-b border-gray-700 bg-gray-800/50 backdrop-blur-sm">
-                <LogoIcon className="w-8 h-8 text-cyan-400 mr-3" />
-                <h1 className="text-xl font-bold text-gray-100">AI SVG Icon Generator</h1>
+        <div className="flex flex-col h-screen bg-gradient-to-br from-blue-50 to-indigo-100 text-slate-800">
+            <header className="flex items-center p-4 glass-effect shadow-professional">
+                <LogoIcon className="w-8 h-8 text-blue-600 mr-3" />
+                <h1 className="text-xl font-bold text-slate-800">AI SVG Icon Generator</h1>
             </header>
 
             {error && (
-                <div className="bg-red-800/50 text-white p-3 text-center border-b border-red-700">
+                <div className="bg-red-50 text-red-800 p-3 text-center border-b border-red-200">
                     <strong>Error:</strong> {error}
                 </div>
             )}
 
             <main className="flex-grow flex flex-col lg:flex-row overflow-hidden">
                 {/* Left Pane: Chat & History */}
-                <div className="w-full lg:w-1/3 flex flex-col h-1/2 lg:h-full border-r border-gray-700">
+                <div className="w-full lg:w-1/3 flex flex-col h-1/2 lg:h-full border-r border-slate-200">
                     <ChatPanel
                         messages={chatMessages}
                         onSendMessage={handleSendMessage}
