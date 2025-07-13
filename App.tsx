@@ -2,7 +2,8 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { ChatPanel } from './components/ChatPanel';
 import { EditorPanel } from './components/EditorPanel';
-import { LogoIcon } from './components/icons';
+import { SettingsModal } from './components/SettingsModal';
+import { LogoIcon, SettingsIcon } from './components/icons';
 import type { ChatMessage } from './types';
 import { generateSvgFromText, generateSvgFromImage, optimizeSvg, optimizePrompt } from './services/geminiService';
 
@@ -13,10 +14,35 @@ const App: React.FC = () => {
     const [svgCode, setSvgCode] = useState<string>('<svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"></svg>');
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
+    const [showSettings, setShowSettings] = useState<boolean>(false);
+    const [apiKey, setApiKey] = useState<string>('');
+    const [showToast, setShowToast] = useState<boolean>(false);
+    const [toastMessage, setToastMessage] = useState<string>('');
 
+    // Initialize API key from environment or localStorage
+    useEffect(() => {
+        const envApiKey = process.env.GEMINI_API_KEY;
+        const storedApiKey = localStorage.getItem('gemini_api_key');
+        
+        if (storedApiKey) {
+            setApiKey(storedApiKey);
+        } else if (envApiKey) {
+            setApiKey(envApiKey);
+        }
+    }, []);
 
+    const showToastMessage = (message: string) => {
+        setToastMessage(message);
+        setShowToast(true);
+        setTimeout(() => setShowToast(false), 3000);
+    };
 
     const handleSendMessage = useCallback(async (message: string, image: string | null) => {
+        if (!apiKey) {
+            showToastMessage('Cannot generate: No API key provided. Please configure your Gemini API key in settings.');
+            return;
+        }
+        
         setError(null);
         const newUserMessage: ChatMessage = { role: 'user', content: message, image };
         setChatMessages(prev => [...prev, newUserMessage]);
@@ -59,6 +85,11 @@ const App: React.FC = () => {
     }, [chatMessages, svgCode]);
 
     const handleOptimizePrompt = useCallback(async (prompt: string) => {
+        if (!apiKey) {
+            showToastMessage('Cannot optimize prompt: No API key provided. Please configure your Gemini API key in settings.');
+            return;
+        }
+        
         setIsLoading(true);
         try {
             const optimizedPrompt = await optimizePrompt(prompt);
@@ -82,13 +113,39 @@ const App: React.FC = () => {
         setSvgCode(newCode);
     };
 
+    const handleApiKeyChange = (newApiKey: string) => {
+        setApiKey(newApiKey);
+        if (newApiKey) {
+            localStorage.setItem('gemini_api_key', newApiKey);
+            // Update the service with new API key
+            process.env.GEMINI_API_KEY = newApiKey;
+        } else {
+            localStorage.removeItem('gemini_api_key');
+        }
+    };
 
     return (
         <div className="flex flex-col h-screen bg-gradient-to-br from-blue-50 to-indigo-100 text-slate-800">
             <header className="flex items-center p-4 glass-effect shadow-professional">
-                <LogoIcon className="w-8 h-8 text-blue-600 mr-3" />
-                <h1 className="text-xl font-bold text-slate-800">AI SVG Icon Generator</h1>
+                <div className="flex items-center flex-grow">
+                    <LogoIcon className="w-8 h-8 text-blue-600 mr-3" />
+                    <h1 className="text-xl font-bold text-slate-800">AI SVG Icon Generator</h1>
+                </div>
+                <button
+                    onClick={() => setShowSettings(true)}
+                    className="p-2 text-slate-600 hover:text-blue-600 rounded-lg transition-colors professional-button"
+                    title="Settings"
+                >
+                    <SettingsIcon className="w-6 h-6" />
+                </button>
             </header>
+
+            {/* Toast Notification */}
+            {showToast && (
+                <div className="fixed top-4 right-4 bg-red-500 text-white px-4 py-2 rounded-lg shadow-professional-lg z-50 animate-pulse">
+                    {toastMessage}
+                </div>
+            )}
 
             {error && (
                 <div className="bg-red-50 text-red-800 p-3 text-center border-b border-red-200">
@@ -115,6 +172,13 @@ const App: React.FC = () => {
                     />
                 </div>
             </main>
+            
+            <SettingsModal
+                isOpen={showSettings}
+                onClose={() => setShowSettings(false)}
+                onApiKeyChange={handleApiKeyChange}
+                currentApiKey={apiKey}
+            />
         </div>
     );
 };

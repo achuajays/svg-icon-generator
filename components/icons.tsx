@@ -86,6 +86,21 @@ export const LoadingSpinner: React.FC<React.SVGProps<SVGSVGElement>> = (props) =
     </svg>
 );
 
+export const SettingsIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+    <svg {...props} width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <g fill="none" stroke="currentColor" strokeWidth="2">
+            <circle cx="12" cy="12" r="4"/>
+            <path d="M 22 12
+                     L 20.66 17.00 L 18.06 15.50 A 7 7 0 0 1 15.50 18.06 L 17.00 20.66
+                     L 12.00 22.00 L 12.00 19.00 A 7 7 0 0 1 8.50 18.06 L 7.00 20.66
+                     L 3.34 17.00 L 5.94 15.50 A 7 7 0 0 1 5.00 12.00 L 2.00 12.00
+                     L 3.34 7.00 L 5.94 8.50 A 7 7 0 0 1 8.50 5.94 L 7.00 3.34
+                     L 12.00 2.00 L 12.00 5.00 A 7 7 0 0 1 15.50 5.94 L 17.00 3.34
+                     L 20.66 7.00 L 18.06 8.50 A 7 7 0 0 1 19.00 12.00 L 22.00 12.00 Z"/>
+        </g>
+    </svg>
+);
+
 export const CodeIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
     <svg {...props} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
         <path strokeLinecap="round" strokeLinejoin="round" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
