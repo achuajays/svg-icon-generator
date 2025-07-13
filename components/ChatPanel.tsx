@@ -1,18 +1,20 @@
 
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import type { ChatMessage } from '../types';
-import { AILogo, UserLogo, SendIcon, PaperclipIcon, CloseIcon, LoadingSpinner } from './icons';
+import { AILogo, UserLogo, SendIcon, PaperclipIcon, CloseIcon, LoadingSpinner, OptimizeIcon } from './icons';
 
 interface ChatPanelProps {
     messages: ChatMessage[];
     onSendMessage: (message: string, image: string | null) => void;
+    onOptimizePrompt: (prompt: string) => Promise<string | undefined>;
     isLoading: boolean;
 }
 
-export const ChatPanel: React.FC<ChatPanelProps> = ({ messages, onSendMessage, isLoading }) => {
+export const ChatPanel: React.FC<ChatPanelProps> = ({ messages, onSendMessage, onOptimizePrompt, isLoading }) => {
     const [input, setInput] = useState('');
     const [image, setImage] = useState<string | null>(null);
     const [imageName, setImageName] = useState<string | null>(null);
+    const [isOptimizing, setIsOptimizing] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -58,6 +60,22 @@ export const ChatPanel: React.FC<ChatPanelProps> = ({ messages, onSendMessage, i
         setImageName(null);
         if(fileInputRef.current) fileInputRef.current.value = "";
     }
+
+    const handleOptimizePrompt = async () => {
+        if (!input.trim()) return;
+        
+        setIsOptimizing(true);
+        try {
+            const optimizedPrompt = await onOptimizePrompt(input);
+            if (optimizedPrompt) {
+                setInput(optimizedPrompt);
+            }
+        } catch (error) {
+            console.error('Failed to optimize prompt:', error);
+        } finally {
+            setIsOptimizing(false);
+        }
+    };
 
     return (
         <div className="flex flex-col h-full professional-card rounded-none">
@@ -107,6 +125,18 @@ export const ChatPanel: React.FC<ChatPanelProps> = ({ messages, onSendMessage, i
                         rows={1}
                         className="flex-grow bg-transparent focus:outline-none resize-none text-slate-700 placeholder-slate-400 max-h-24 custom-scrollbar input-professional"
                     />
+                    <button 
+                        onClick={handleOptimizePrompt} 
+                        disabled={isLoading || isOptimizing || !input.trim()} 
+                        className="p-2 text-slate-500 hover:text-orange-600 rounded-md transition-colors professional-button disabled:opacity-50 disabled:cursor-not-allowed"
+                        title="Optimize prompt for better SVG generation"
+                    >
+                        {isOptimizing ? (
+                            <LoadingSpinner className="w-5 h-5" />
+                        ) : (
+                            <OptimizeIcon className="w-5 h-5" />
+                        )}
+                    </button>
                     <button onClick={handleSend} disabled={isLoading} className="p-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-slate-400 disabled:cursor-not-allowed transition-colors professional-button shadow-professional">
                         <SendIcon className="w-5 h-5" />
                     </button>

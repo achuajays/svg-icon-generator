@@ -107,6 +107,42 @@ export const generateSvgFromImage = async (base64Image: string, prompt: string):
     }
 };
 
+export const optimizePrompt = async (originalPrompt: string): Promise<string> => {
+    const systemInstruction = `You are an expert at writing prompts for SVG generation. Your task is to take a user's basic prompt and enhance it to create better, more detailed SVG icons.
+
+Guidelines for optimization:
+- Add specific details about style (modern, minimalist, flat, outlined, etc.)
+- Specify colors if not mentioned (suggest appropriate ones)
+- Add details about stroke width, fill, and visual style
+- Mention icon-appropriate sizing and scalability
+- Keep it concise but descriptive
+- Focus on creating clean, professional icons
+
+Return ONLY the optimized prompt, nothing else.`;
+
+    const fullPrompt = `Original prompt: "${originalPrompt}"
+
+Optimize this prompt for creating a professional SVG icon.`;
+
+    try {
+        const response = await ai.models.generateContent({
+            model,
+            contents: fullPrompt,
+            config: {
+                systemInstruction,
+                temperature: 0.3,
+            }
+        });
+
+        const optimizedPrompt = response.text.trim();
+        return optimizedPrompt;
+
+    } catch (error) {
+        console.error("Error optimizing prompt:", error);
+        throw new Error("Failed to optimize the prompt.");
+    }
+};
+
 export const optimizeSvg = async (svgCode: string, prompt: string): Promise<string> => {
     const systemInstruction = `You are an SVG optimization expert.
 Your task is to take the provided SVG code and optimize it based on the user's request.

@@ -5,7 +5,7 @@ import { EditorPanel } from './components/EditorPanel';
 import { HistoryPanel } from './components/HistoryPanel';
 import { LogoIcon } from './components/icons';
 import type { ChatMessage, HistoryEntry } from './types';
-import { generateSvgFromText, generateSvgFromImage, optimizeSvg } from './services/geminiService';
+import { generateSvgFromText, generateSvgFromImage, optimizeSvg, optimizePrompt } from './services/geminiService';
 
 const App: React.FC = () => {
     const [chatMessages, setChatMessages] = useState<ChatMessage[]>([
@@ -80,6 +80,26 @@ const App: React.FC = () => {
         }
     }, [chatMessages, svgCode, addHistoryEntry]);
 
+    const handleOptimizePrompt = useCallback(async (prompt: string) => {
+        setIsLoading(true);
+        try {
+            const optimizedPrompt = await optimizePrompt(prompt);
+            setChatMessages(prev => [...prev, 
+                { role: 'user', content: `Optimize this prompt: "${prompt}"` },
+                { role: 'ai', content: `Here's an optimized version: "${optimizedPrompt}"` }
+            ]);
+            
+            // Update the input field in ChatPanel by triggering a re-render
+            // We'll need to pass the optimized prompt back to update the input
+            return optimizedPrompt;
+        } catch (err) {
+            const errorMessage = err instanceof Error ? err.message : 'Failed to optimize prompt.';
+            setChatMessages(prev => [...prev, { role: 'ai', content: `Sorry, couldn't optimize the prompt: ${errorMessage}` }]);
+        } finally {
+            setIsLoading(false);
+        }
+    }, []);
+
     const handleRevertToVersion = useCallback((code: string) => {
         setSvgCode(code);
         setChatMessages(prev => [...prev, { role: 'ai', content: 'Reverted to a previous version.' }]);
@@ -113,6 +133,7 @@ const App: React.FC = () => {
                     <ChatPanel
                         messages={chatMessages}
                         onSendMessage={handleSendMessage}
+                        onOptimizePrompt={handleOptimizePrompt}
                         isLoading={isLoading}
                     />
                     <HistoryPanel
