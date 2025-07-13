@@ -5,10 +5,9 @@ import { CopyIcon, DownloadIcon, SaveIcon, CodeIcon, EyeIcon } from './icons';
 interface EditorPanelProps {
     svgCode: string;
     onCodeChange: (newCode: string) => void;
-    onSaveVersion: () => void;
 }
 
-export const EditorPanel: React.FC<EditorPanelProps> = ({ svgCode, onCodeChange, onSaveVersion }) => {
+export const EditorPanel: React.FC<EditorPanelProps> = ({ svgCode, onCodeChange }) => {
     const [showPreview, setShowPreview] = useState(true);
 
     const svgDataUrl = useMemo(() => {
@@ -52,9 +51,6 @@ export const EditorPanel: React.FC<EditorPanelProps> = ({ svgCode, onCodeChange,
                     </div>
                 </div>
                 <div className="flex items-center gap-3">
-                    <button onClick={onSaveVersion} className="flex items-center gap-2 px-4 py-2 text-sm bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors professional-button text-slate-700 border border-slate-200">
-                        <SaveIcon className="w-4 h-4" /> Save Version
-                    </button>
                     <button onClick={copyToClipboard} className="flex items-center gap-2 px-4 py-2 text-sm bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors professional-button text-slate-700 border border-slate-200">
                         <CopyIcon className="w-4 h-4" /> Copy
                     </button>

@@ -2,9 +2,8 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { ChatPanel } from './components/ChatPanel';
 import { EditorPanel } from './components/EditorPanel';
-import { HistoryPanel } from './components/HistoryPanel';
 import { LogoIcon } from './components/icons';
-import type { ChatMessage, HistoryEntry } from './types';
+import type { ChatMessage } from './types';
 import { generateSvgFromText, generateSvgFromImage, optimizeSvg, optimizePrompt } from './services/geminiService';
 
 const App: React.FC = () => {
@@ -12,29 +11,9 @@ const App: React.FC = () => {
         { role: 'ai', content: 'Hello! Describe the SVG you want to create, or upload an image to start. For example, try "a simple sun with rays".' }
     ]);
     const [svgCode, setSvgCode] = useState<string>('<svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"></svg>');
-    const [svgHistory, setSvgHistory] = useState<HistoryEntry[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
-    const historyIdCounter = useRef(0);
 
-    const addHistoryEntry = useCallback((newSvgCode: string) => {
-        if (newSvgCode.trim() === (svgHistory[svgHistory.length - 1]?.code || '').trim()) {
-            return;
-        }
-        const newEntry: HistoryEntry = {
-            id: ++historyIdCounter.current,
-            timestamp: new Date().toLocaleTimeString(),
-            code: newSvgCode
-        };
-        setSvgHistory(prev => [...prev, newEntry]);
-    }, [svgHistory]);
-    
-    useEffect(() => {
-        if(svgCode) {
-            addHistoryEntry(svgCode);
-        }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
 
 
     const handleSendMessage = useCallback(async (message: string, image: string | null) => {
@@ -60,7 +39,6 @@ const App: React.FC = () => {
             if (responseSvg) {
                 const cleanedSvg = responseSvg.replace(/```svg\n|```/g, '').trim();
                 setSvgCode(cleanedSvg);
-                addHistoryEntry(cleanedSvg);
                 setChatMessages(prev => {
                     const lastMessage = prev[prev.length - 1];
                     if (lastMessage.role === 'ai' && lastMessage.content.includes('...')) {
@@ -78,7 +56,7 @@ const App: React.FC = () => {
         } finally {
             setIsLoading(false);
         }
-    }, [chatMessages, svgCode, addHistoryEntry]);
+    }, [chatMessages, svgCode]);
 
     const handleOptimizePrompt = useCallback(async (prompt: string) => {
         setIsLoading(true);
@@ -100,19 +78,10 @@ const App: React.FC = () => {
         }
     }, []);
 
-    const handleRevertToVersion = useCallback((code: string) => {
-        setSvgCode(code);
-        setChatMessages(prev => [...prev, { role: 'ai', content: 'Reverted to a previous version.' }]);
-    }, []);
-    
     const handleEditorChange = (newCode: string) => {
         setSvgCode(newCode);
     };
 
-    const handleSaveVersion = () => {
-        addHistoryEntry(svgCode);
-        setChatMessages(prev => [...prev, { role: 'ai', content: 'Manually saved current SVG as a new version.' }]);
-    };
 
     return (
         <div className="flex flex-col h-screen bg-gradient-to-br from-blue-50 to-indigo-100 text-slate-800">
@@ -129,25 +98,20 @@ const App: React.FC = () => {
 
             <main className="flex-grow flex flex-col lg:flex-row overflow-hidden">
                 {/* Left Pane: Chat & History */}
-                <div className="w-full lg:w-1/3 flex flex-col h-1/2 lg:h-full border-r border-slate-200">
+                <div className="w-full lg:w-1/3 h-1/2 lg:h-full border-r border-slate-200">
                     <ChatPanel
                         messages={chatMessages}
                         onSendMessage={handleSendMessage}
                         onOptimizePrompt={handleOptimizePrompt}
                         isLoading={isLoading}
                     />
-                    <HistoryPanel
-                        history={svgHistory}
-                        onRevert={handleRevertToVersion}
-                    />
                 </div>
 
                 {/* Right Pane: Editor & Preview */}
-                <div className="w-full lg:w-2/3 flex-grow flex flex-col h-1/2 lg:h-full">
+                <div className="w-full lg:w-2/3 h-1/2 lg:h-full">
                    <EditorPanel 
                         svgCode={svgCode} 
                         onCodeChange={handleEditorChange}
-                        onSaveVersion={handleSaveVersion}
                     />
                 </div>
             </main>
