@@ -21,13 +21,10 @@ const App: React.FC = () => {
 
     // Initialize API key from environment or localStorage
     useEffect(() => {
-        const envApiKey = process.env.GEMINI_API_KEY;
         const storedApiKey = localStorage.getItem('gemini_api_key');
         
         if (storedApiKey) {
             setApiKey(storedApiKey);
-        } else if (envApiKey) {
-            setApiKey(envApiKey);
         }
     }, []);
 
@@ -40,6 +37,7 @@ const App: React.FC = () => {
     const handleSendMessage = useCallback(async (message: string, image: string | null) => {
         if (!apiKey) {
             showToastMessage('Cannot generate: No API key provided. Please configure your Gemini API key in settings.');
+            setShowSettings(true);
             return;
         }
         
@@ -87,6 +85,7 @@ const App: React.FC = () => {
     const handleOptimizePrompt = useCallback(async (prompt: string) => {
         if (!apiKey) {
             showToastMessage('Cannot optimize prompt: No API key provided. Please configure your Gemini API key in settings.');
+            setShowSettings(true);
             return;
         }
         

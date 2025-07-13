@@ -1,9 +1,9 @@
 import { GoogleGenAI } from "@google/genai";
 
 const getApiKey = () => {
-    // Try localStorage first, then environment variable
+    // Only use localStorage - don't expose environment variables
     const storedApiKey = typeof window !== 'undefined' ? localStorage.getItem('gemini_api_key') : null;
-    return storedApiKey || process.env.GEMINI_API_KEY || '';
+    return storedApiKey || '';
 };
 
 const createAI = () => {
