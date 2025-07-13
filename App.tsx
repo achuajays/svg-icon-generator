@@ -1,5 +1,5 @@
 
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { ChatPanel } from './components/ChatPanel';
 import { EditorPanel } from './components/EditorPanel';
 import { HistoryPanel } from './components/HistoryPanel';
@@ -15,13 +15,14 @@ const App: React.FC = () => {
     const [svgHistory, setSvgHistory] = useState<HistoryEntry[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
+    const historyIdCounter = useRef(0);
 
     const addHistoryEntry = useCallback((newSvgCode: string) => {
         if (newSvgCode.trim() === (svgHistory[svgHistory.length - 1]?.code || '').trim()) {
             return;
         }
         const newEntry: HistoryEntry = {
-            id: Date.now(),
+            id: ++historyIdCounter.current,
             timestamp: new Date().toLocaleTimeString(),
             code: newSvgCode
         };
