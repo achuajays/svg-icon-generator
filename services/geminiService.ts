@@ -1,11 +1,19 @@
-
 import { GoogleGenAI } from "@google/genai";
 
-if (!process.env.GEMINI_API_KEY) {
-    throw new Error("GEMINI_API_KEY environment variable not set");
-}
+const getApiKey = () => {
+    // Try localStorage first, then environment variable
+    const storedApiKey = typeof window !== 'undefined' ? localStorage.getItem('gemini_api_key') : null;
+    return storedApiKey || process.env.GEMINI_API_KEY || '';
+};
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+const createAI = () => {
+    const apiKey = getApiKey();
+    if (!apiKey) {
+        throw new Error("No API key provided. Please configure your Gemini API key in settings.");
+    }
+    return new GoogleGenAI({ apiKey });
+};
+
 const model = "gemini-2.5-flash";
 
 const extractSvgCode = (text: string): string => {
@@ -44,6 +52,7 @@ Based on the user's request, generate the new SVG code.
 `;
 
     try {
+        const ai = createAI();
         const response = await ai.models.generateContent({
             model,
             contents: fullPrompt,
@@ -87,6 +96,7 @@ export const generateSvgFromImage = async (base64Image: string, prompt: string):
     };
     
     try {
+        const ai = createAI();
         const response = await ai.models.generateContent({
             model,
             contents: { parts: [imagePart, textPart] },
@@ -125,6 +135,7 @@ Return ONLY the optimized prompt, nothing else.`;
 Optimize this prompt for creating a professional SVG icon.`;
 
     try {
+        const ai = createAI();
         const response = await ai.models.generateContent({
             model,
             contents: fullPrompt,
@@ -158,6 +169,7 @@ ${svgCode}
 `;
     
     try {
+        const ai = createAI();
         const response = await ai.models.generateContent({
             model,
             contents: fullPrompt,
